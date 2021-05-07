@@ -10,3 +10,6 @@ The project uses Unity Events to connect the modules, allowing for different sol
 
 ## Usage
 The main use for this project is a tool for Volume to experiment with implementing their AI with a virtual character that can be edited and adjusted easily. These characters can then be displayed on screens or in VR. 
+
+## More Info
+To find out more about how to use and adjust this project, check out the [wiki](https://github.com/Om8/VolumeAIUnityAvatar/wiki)
