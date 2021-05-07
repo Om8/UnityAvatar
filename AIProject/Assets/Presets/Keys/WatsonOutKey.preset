@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WatsonOutKey
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: 4c312bbbd0844fc4dbd02b74103d8cfd,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: iamApikey
+    value: Ece5mSvRKGZcvYWMetPasttFHfBl18lcJ-0xIjWXzoRO
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: serviceUrl
+    value: https://api.eu-gb.text-to-speech.watson.cloud.ibm.com/instances/3c1d151a-55cd-4a84-b9b1-45348e482d59
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: allisionVoice
+    value: en-AU_CraigVoice
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: source
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: finishedEvent.m_PersistentCalls.m_Calls.Array.size
+    value: 0
+    objectReference: {fileID: 0}

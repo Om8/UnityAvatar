@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: OVRLipSyncContextMorphTarget
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: b0b97b38f2f1fd24185315141a6c6a56,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: skinnedMeshRenderer
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.size
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[0]
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[1]
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[2]
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[3]
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[4]
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[5]
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[6]
+    value: 6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[7]
+    value: 7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[8]
+    value: 8
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[9]
+    value: 9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[10]
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[11]
+    value: 11
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[12]
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[13]
+    value: 13
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeToBlendTargets.Array.data[14]
+    value: 14
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: enableVisemeTestKeys
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.size
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[0]
+    value: 96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[1]
+    value: 9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[2]
+    value: 113
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[3]
+    value: 119
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[4]
+    value: 101
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[5]
+    value: 114
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[6]
+    value: 116
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[7]
+    value: 121
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[8]
+    value: 117
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[9]
+    value: 105
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[10]
+    value: 111
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[11]
+    value: 112
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[12]
+    value: 91
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[13]
+    value: 93
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: visemeTestKeys.Array.data[14]
+    value: 92
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: laughterKey
+    value: 301
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: laughterBlendTarget
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: laughterThreshold
+    value: 0.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: laughterMultiplier
+    value: 1.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: smoothAmount
+    value: 73
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: listOfMouthPositions
+    value: 
+    objectReference: {fileID: 0}

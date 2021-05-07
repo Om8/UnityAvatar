@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: EmotionStates
+  m_Controller: {fileID: 9100000, guid: 56637b0df94c3264383f1ced361cc19a, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 78e06262eca14184cac01a1910db8727,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 45e68132c995348428c56edcc6484f3a,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 52aca8455e6983547a356e3f11f5b411,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: f342e051f74885c4a9c19087fe9c3831,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: fc49b3e2d6b03b34c82fb10fbf0b361b,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 569ef0e6b028f6a4f86ca4fcdc772f2b,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 102228db3e4384545b0f44a46c1ff820,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 3e9a5bb29842b834fbcf1d0cab454038,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 194d465f51b03e94ca26506e88bab394,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 83cfde89c5b438b42a06afc84e0cbf3c,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: c9249e2462e747b4a9145273ff88ad88,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 244e921f82e71f245b3438f3229c3242,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 0eb15270e2162f94595ba65644df8c86,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: fd194213a9e6e8b4bba4e1bc43fc2988,
+      type: 3}
