@@ -13,3 +13,7 @@ The main use for this project is a tool for Volume to experiment with implementi
 
 ## More Info
 To find out more about how to use and adjust this project, check out the [wiki](https://github.com/Om8/VolumeAIUnityAvatar/wiki)
+
+## Videos
+[Setup video](https://www.youtube.com/watch?v=IVsnARVwM0o)  
+[VR demonstration](https://www.youtube.com/watch?v=frrtOTQOyP0)
