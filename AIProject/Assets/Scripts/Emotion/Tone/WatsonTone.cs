@@ -27,147 +27,167 @@ using IBM.Cloud.SDK.Authentication.Iam;
 using System.Text;
 using System.IO;
 using UnityEngine.Events;
+using AI.Volume.Bot.Events;
 
-[System.Serializable]
-public class FaceEmotionJson
+namespace AI.Volume.Bot.Tone
 {
-	public float score;
-	public string tone_id;
-	public string tone_name;
-
-	public static FaceEmotionJson CreateFromJson(string json)
+	[System.Serializable]
+	public class FaceEmotionJson
 	{
-		return JsonUtility.FromJson<FaceEmotionJson>(json);
-	}
-}
+		public float score;
+		public string tone_id;
+		public string tone_name;
 
-public class WatsonTone : MonoBehaviour
-{
-	#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
-	[Space(10)]
-	[Tooltip("The IAM apikey.")]
-	[SerializeField]
-	private string iamApikey;
-	[Tooltip("The service URL (optional). This defaults to \"https://api.us-south.tone-analyzer.watson.cloud.ibm.com\"")]
-	[SerializeField]
-	private string serviceUrl;
-	[Tooltip("The version date with which you would like to use the service in the form YYYY-MM-DD.")]
-	[SerializeField]
-	private string versionDate;
-	#endregion
-
-	private ToneAnalyzerService service;
-
-	private bool ResponseGiven = false;
-
-	[SerializeField]
-	public AudioEvent responseTone;
-
-	List<FaceEmotionJson> listOfEmotions = new List<FaceEmotionJson>();
-
-	private void Start()
-	{
-		LogSystem.InstallDefaultReactors();
-		Runnable.Run(CreateService());
-	}
-
-	private IEnumerator CreateService()
-	{
-		if (string.IsNullOrEmpty(iamApikey))
+		public static FaceEmotionJson CreateFromJson(string json)
 		{
-			throw new IBMException("Plesae provide IAM ApiKey for the service.");
+			return JsonUtility.FromJson<FaceEmotionJson>(json);
+		}
+	}
+
+	public class WatsonTone : MonoBehaviour
+	{
+		#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
+		[Space(10)]
+		[Tooltip("The IAM apikey.")]
+		[SerializeField]
+		private string iamApikey;
+		[Tooltip("The service URL (optional). This defaults to \"https://api.us-south.tone-analyzer.watson.cloud.ibm.com\"")]
+		[SerializeField]
+		private string serviceUrl;
+		[Tooltip("The version date with which you would like to use the service in the form YYYY-MM-DD.")]
+		[SerializeField]
+		private string versionDate;
+		#endregion
+
+		private ToneAnalyzerService service;
+
+		private bool ResponseGiven = false;
+
+		[SerializeField]
+		public AudioEvent responseTone;
+
+		List<FaceEmotionJson> listOfEmotions = new List<FaceEmotionJson>();
+
+		private void Start()
+		{
+			LogSystem.InstallDefaultReactors();
+			Runnable.Run(CreateService());
 		}
 
-		//  Create credential and instantiate service
-		IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
-
-		//  Wait for tokendata
-		while (!authenticator.CanAuthenticate())
-			yield return null;
-
-		service = new ToneAnalyzerService(versionDate, authenticator);
-		if (!string.IsNullOrEmpty(serviceUrl))
+		//Create the audio service.
+		private IEnumerator CreateService()
 		{
-			service.SetServiceUrl(serviceUrl);
+			if (string.IsNullOrEmpty(iamApikey))
+			{
+				throw new IBMException("Plesae provide IAM ApiKey for the service.");
+			}
+
+			//  Create credential and instantiate service
+			IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
+
+			//  Wait for tokendata
+			while (!authenticator.CanAuthenticate())
+				yield return null;
+
+			service = new ToneAnalyzerService(versionDate, authenticator);
+			if (!string.IsNullOrEmpty(serviceUrl))
+			{
+				service.SetServiceUrl(serviceUrl);
+			}
 		}
-		//GetTone("Test, please could you do this for me. I am quite sad at the moment.");
-	}
 
-	public void GetTone(string phrase)
-	{
-		Runnable.Run(CheckForTone(phrase)); 
-	}
+		/// <summary>
+		/// Get the current tone of a string
+		/// </summary>
+		/// <param name="phrase">string to get the tone of</param>
+		public void GetTone(string phrase)
+		{
+			Runnable.Run(CheckForTone(phrase));
+		}
 
-	private IEnumerator CheckForTone(string phraseToCheck)
-	{
-		ResponseGiven = false;
-		byte[] bytes = Encoding.ASCII.GetBytes(phraseToCheck);
-		MemoryStream toneInput = new MemoryStream(bytes);
+		/// <summary>
+		/// Check the string for the tone, but this time you wait for a response.
+		/// </summary>
+		/// <param name="phraseToCheck">String to check</param>
+		/// <returns></returns>
+		private IEnumerator CheckForTone(string phraseToCheck)
+		{
+			ResponseGiven = false;
+			byte[] bytes = Encoding.ASCII.GetBytes(phraseToCheck);
+			MemoryStream toneInput = new MemoryStream(bytes);
 
-		List<string> tones = new List<string>()
+			List<string> tones = new List<string>()
 			{
 				"emotion",
 				"language",
 				"social"
 			};
-		service.Tone(callback: OnTone, toneInput: toneInput, sentences: false, tones: tones, contentLanguage: "en", acceptLanguage: "en", contentType: "text/plain");
+			service.Tone(callback: OnTone, toneInput: toneInput, sentences: false, tones: tones, contentLanguage: "en", acceptLanguage: "en", contentType: "text/plain");
 
-		while (!ResponseGiven)
-		{
-			yield return null;
-		}
-
-	}
-
-	private void OnTone(DetailedResponse<ToneAnalysis> response, IBMError error)
-	{
-		if (error != null)
-		{
-			Log.Debug("ExampleToneAnalyzerV3.OnTone()", "Error: {0}: {1}", error.StatusCode, error.ErrorMessage);
-		}
-		else
-		{
-			responseTone.Invoke(FindStrongestEmotion(response.Response));
-		}
-
-		ResponseGiven = true;
-	}
-
-
-	string FindStrongestEmotion(string input)
-	{
-		input = input.Replace("\"document_tone\":{\"tones\":[{", "");
-		input = input.Replace("]}}", "");
-		if (input.Length > 28)
-		{
-			string[] arrayOfJsons = input.Split(new string[] { "},{" }, System.StringSplitOptions.None);
-
-			if (listOfEmotions != null)
+			while (!ResponseGiven)
 			{
-				listOfEmotions.Clear();
-
-
-				for (int i = 0; i < arrayOfJsons.Length; i++)
-				{
-					if (arrayOfJsons[i][0] != '{') arrayOfJsons[i] = arrayOfJsons[i].Insert(0, "{");
-					if (arrayOfJsons[i][arrayOfJsons[i].Length - 1] != '}') arrayOfJsons[i] = arrayOfJsons[i].Insert(arrayOfJsons[i].Length, "}");
-					FaceEmotionJson emotion = new FaceEmotionJson();
-					emotion = FaceEmotionJson.CreateFromJson(arrayOfJsons[i]);
-					listOfEmotions.Add(emotion);
-				}
-
-				FaceEmotionJson finalResult = new FaceEmotionJson(); ;
-				foreach (FaceEmotionJson inst in listOfEmotions)
-				{
-					if (inst.score > finalResult.score)
-					{
-						finalResult = inst;
-					}
-				}
-				return finalResult.tone_name;
+				yield return null;
 			}
+
 		}
-		return "Base";
+
+		//Just the tone returned.
+		private void OnTone(DetailedResponse<ToneAnalysis> response, IBMError error)
+		{
+			if (error != null)
+			{
+				Log.Debug("ExampleToneAnalyzerV3.OnTone()", "Error: {0}: {1}", error.StatusCode, error.ErrorMessage);
+			}
+			else
+			{
+				//Pass the tone on
+				if(responseTone != null) responseTone.Invoke(FindStrongestEmotion(response.Response));
+			}
+
+			ResponseGiven = true;
+		}
+
+		//Parse the tone into something readable and useable.
+		string FindStrongestEmotion(string input)
+		{
+			//Remove start and end.
+			input = input.Replace("\"document_tone\":{\"tones\":[{", "");
+			input = input.Replace("]}}", "");
+			//Make sure it is long enough
+			if (input.Length > 28)
+			{
+				//Split them all up
+				string[] arrayOfJsons = input.Split(new string[] { "},{" }, System.StringSplitOptions.None);
+
+				if (listOfEmotions != null)
+				{
+					listOfEmotions.Clear();
+
+
+					for (int i = 0; i < arrayOfJsons.Length; i++)
+					{
+						if (arrayOfJsons[i][0] != '{') arrayOfJsons[i] = arrayOfJsons[i].Insert(0, "{");
+						if (arrayOfJsons[i][arrayOfJsons[i].Length - 1] != '}') arrayOfJsons[i] = arrayOfJsons[i].Insert(arrayOfJsons[i].Length, "}");
+						FaceEmotionJson emotion = new FaceEmotionJson();
+						emotion = FaceEmotionJson.CreateFromJson(arrayOfJsons[i]);
+						//Add the split data to a list
+						listOfEmotions.Add(emotion);
+					}
+
+					//Get the highest scored value and return it.
+					FaceEmotionJson finalResult = new FaceEmotionJson(); ;
+					foreach (FaceEmotionJson inst in listOfEmotions)
+					{
+						if (inst.score > finalResult.score)
+						{
+							finalResult = inst;
+						}
+					}
+					return finalResult.tone_name;
+				}
+			}
+			return "Base";
+		}
 	}
 }
 

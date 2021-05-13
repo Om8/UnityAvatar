@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Struct of mouth positions, an easier way to store data instead of a 2D array.
-[System.Serializable]
-public struct MouthPosition
+namespace AI.Volume.Bot.Visual
 {
-	public float[] blendShapes;
-
-	public MouthPosition(float[] shapes)
+	//Struct of mouth positions, an easier way to store data instead of a 2D array.
+	[System.Serializable]
+	public struct MouthPosition
 	{
-		blendShapes = shapes;
+		public float[] blendShapes;
+
+		public MouthPosition(float[] shapes)
+		{
+			blendShapes = shapes;
+		}
 	}
 }

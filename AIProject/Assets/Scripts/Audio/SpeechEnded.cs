@@ -3,30 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class SpeechEnded : MonoBehaviour
+namespace AI.Volume.Bot.Audio
 {
-	[SerializeField]
-	UnityEvent finished;
-	[SerializeField]
-	AudioSource source;
+	public class SpeechEnded : MonoBehaviour
+	{
+		[SerializeField, Tooltip("Once the speech has finished, call this function")]
+		UnityEvent finished;
+		[SerializeField, Tooltip("Audio source to check")]
+		AudioSource source;
 
-	bool isPlaying;
+		bool isPlaying;
 
-    void Update()
-    {
-     if(source != null)
+		void Update()
 		{
-			if (source.isPlaying)
+			if (source != null)
 			{
-				isPlaying = true;
-			}
-			if (isPlaying && !source.isPlaying) 
-			{
-				Debug.Log("stopped speaking");
-				isPlaying = false;
-				finished.Invoke();
-			}
+				if (source.isPlaying)
+				{
+					isPlaying = true;
+				}
+				if (isPlaying && !source.isPlaying)
+				{
+					Debug.Log("stopped speaking");
+					isPlaying = false;
+					if(finished != null) finished.Invoke();
+				}
 
-		}   
-    }
+			}
+		}
+	}
 }

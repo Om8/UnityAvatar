@@ -3,28 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CheckForQuestion : MonoBehaviour
+namespace AI.Volume.Bot.Audio
 {
-	[SerializeField, Tooltip("Different variations of sounds that can be played if the conditions are met")]
-	AudioClip[] variations;
-	[SerializeField, Tooltip("OVR audio source to play, make sure audio source is on the same object as an OVR morph target")]
-	AudioSource OVRSource;
-
-	/// <summary>
-	/// Check whether a sentence has a question word in it, What, Where, When, Why, Who and How
-	/// </summary>
-	/// <param name="text">Text to input and check</param>
-	public void QuestionChecker(string text)
+	public class CheckForQuestion : MonoBehaviour
 	{
-		text = text.ToLower();
-		if(text.Contains("what") || text.Contains("where") || text.Contains("when") || text.Contains("why") || text.Contains("who") || text.Contains("how"))
+		[SerializeField, Tooltip("Different variations of sounds that can be played if the conditions are met")]
+		AudioClip[] variations;
+		[SerializeField, Tooltip("OVR audio source to play, make sure audio source is on the same object as an OVR morph target")]
+		AudioSource OVRSource;
+
+		/// <summary>
+		/// Check whether a sentence has a question word in it, What, Where, When, Why, Who and How
+		/// </summary>
+		/// <param name="text">Text to input and check</param>
+		public void QuestionChecker(string text)
 		{
-			if(OVRSource != null)
+			text = text.ToLower();
+			//These are the words it checks for to do local responses
+			if (text.Contains("what") || text.Contains("where") || text.Contains("when") || text.Contains("why") || text.Contains("who") || text.Contains("how"))
 			{
-				if(variations.Length > 0)
+				if (OVRSource != null)
 				{
-					OVRSource.clip = variations[Random.Range(0, variations.Length)];
-					OVRSource.Play();
+					if (variations.Length > 0)
+					{
+						//Set the audio clip to a variation and play.
+						OVRSource.clip = variations[Random.Range(0, variations.Length)];
+						OVRSource.Play();
+					}
 				}
 			}
 		}

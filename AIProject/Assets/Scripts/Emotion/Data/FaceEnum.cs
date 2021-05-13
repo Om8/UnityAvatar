@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum FaceRegion
+namespace AI.Volume.Bot.Data
 {
-	Mouth,
-	Face,
-	Eye
+	//Global enum.
+	public enum FaceRegion
+	{
+		Mouth,
+		Face,
+		Eye
+	}
 }
 

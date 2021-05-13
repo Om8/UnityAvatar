@@ -27,105 +27,114 @@ using UnityEngine.UI;
 using IBM.Cloud.SDK;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(AudioSource))]
-public class WatsonOut : MonoBehaviour
+namespace AI.Volume.Bot.Audio
 {
-	#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
-	[Space(10)]
-	[Tooltip("The IAM apikey.")]
-	[SerializeField]
-	private string iamApikey;
-	[Tooltip("The service URL (optional). This defaults to \"https://api.us-south.text-to-speech.watson.cloud.ibm.com\"")]
-	[SerializeField]
-	private string serviceUrl;
-	private TextToSpeechService service;
-	[SerializeField]
-	string allisionVoice = "en-US_AllisonV3Voice";
-	private string synthesizeMimeType = "audio/wav";
-	#endregion
-
-	[SerializeField]
-	public AudioSource source;
-
-	[SerializeField]
-	public UnityEvent finishedEvent;
-
-	private void Start()
+	[RequireComponent(typeof(AudioSource))]
+	public class WatsonOut : MonoBehaviour
 	{
-		if(source != null)
+		#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
+		[Space(10)]
+		[Tooltip("The IAM apikey.")]
+		[SerializeField]
+		private string iamApikey;
+		[Tooltip("The service URL (optional). This defaults to \"https://api.us-south.text-to-speech.watson.cloud.ibm.com\"")]
+		[SerializeField]
+		private string serviceUrl;
+		private TextToSpeechService service;
+		[SerializeField]
+		string allisionVoice = "en-US_AllisonV3Voice";
+		private string synthesizeMimeType = "audio/wav";
+		#endregion
+
+		[SerializeField, Tooltip("The audio source for the audio output")]
+		public AudioSource source;
+
+		[SerializeField, Tooltip("Finished talking, do stuff here")]
+		public UnityEvent finishedEvent;
+
+		private void Start()
 		{
-			source = this.GetComponent<AudioSource>();
-		}
-		LogSystem.InstallDefaultReactors();
-		Runnable.Run(CreateService());
-	}
-
-
-	private IEnumerator CreateService()
-	{
-		if (string.IsNullOrEmpty(iamApikey))
-		{
-			throw new IBMException("Please add IAM ApiKey to the Iam Apikey field in the inspector.");
-		}
-
-		IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
-
-		while (!authenticator.CanAuthenticate())
-		{
-			yield return null;
-		}
-
-		service = new TextToSpeechService(authenticator);
-		if (!string.IsNullOrEmpty(serviceUrl))
-		{
-			service.SetServiceUrl(serviceUrl);
-		}
-	}
-
-	#region Synthesize Example
-	private IEnumerator ExampleSynthesize(string text)
-	{
-		byte[] synthesizeResponse = null;
-		AudioClip clip = null;
-		service.Synthesize(
-			callback: (DetailedResponse<byte[]> response, IBMError error) =>
+			if (source != null)
 			{
-				synthesizeResponse = response.Result;
-				//Log.Debug("ExampleTextToSpeechV1", "Synthesize done!");
-				clip = WaveFile.ParseWAV("myClip", synthesizeResponse);
-				PlayClip(clip);
-			},
-			text: text,
-			voice: allisionVoice,
-			accept: synthesizeMimeType
-		);
-
-		while (synthesizeResponse == null)
-			yield return null;
-
-		yield return new WaitForSeconds(clip.length);
-		finishedEvent.Invoke();
-
-	}
-	#endregion
-
-	#region PlayClip
-	private void PlayClip(AudioClip clip)
-	{
-		if (Application.isPlaying && clip != null)
-		{
-			source.spatialBlend = 0.0f;
-			source.loop = false;
-			source.clip = clip;
-			source.Play();
+				source = this.GetComponent<AudioSource>();
+			}
+			LogSystem.InstallDefaultReactors();
+			Runnable.Run(CreateService());
 		}
-	}
-	#endregion
 
 
-	public void InputText(string words)
-	{
-		Runnable.Run(ExampleSynthesize(words));
+		private IEnumerator CreateService()
+		{
+			if (string.IsNullOrEmpty(iamApikey))
+			{
+				throw new IBMException("Please add IAM ApiKey to the Iam Apikey field in the inspector.");
+			}
+
+			IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
+
+			while (!authenticator.CanAuthenticate())
+			{
+				yield return null;
+			}
+
+			service = new TextToSpeechService(authenticator);
+			if (!string.IsNullOrEmpty(serviceUrl))
+			{
+				service.SetServiceUrl(serviceUrl);
+			}
+		}
+
+		#region Synthesize Example
+		private IEnumerator SynthesiseAudio(string text)
+		{
+			byte[] synthesizeResponse = null;
+			AudioClip clip = null;
+			service.Synthesize(
+				callback: (DetailedResponse<byte[]> response, IBMError error) =>
+				{
+					synthesizeResponse = response.Result;
+					clip = WaveFile.ParseWAV("myClip", synthesizeResponse);
+					PlayClip(clip);
+				},
+				text: text,
+				voice: allisionVoice,
+				accept: synthesizeMimeType
+			);
+
+			while (synthesizeResponse == null)
+				yield return null;
+
+			yield return new WaitForSeconds(clip.length);
+			if(finishedEvent != null) finishedEvent.Invoke();
+		}
+		#endregion
+
+		#region PlayClip
+		/// <summary>
+		/// Play audio clip
+		/// </summary>
+		/// <param name="clip">clip to play</param>
+		private void PlayClip(AudioClip clip)
+		{
+			if (Application.isPlaying && clip != null)
+			{
+				source.spatialBlend = 0.0f;
+				source.loop = false;
+				source.clip = clip;
+				source.Play();
+			}
+		}
+		#endregion
+
+
+		/// <summary>
+		/// Input text to convert to speech.
+		/// </summary>
+		/// <param name="words">The text to turn to speech</param>
+		public void InputText(string words)
+		{
+			Runnable.Run(SynthesiseAudio(words));
+		}
 	}
 }
 

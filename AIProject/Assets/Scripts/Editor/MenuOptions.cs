@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Events;
 using UnityEngine.Events;
+using AI.Volume.Bot.Audio;
+using AI.Volume.Bot.Tone;
+using AI.Volume.Bot.Visual;
+using AI.Volume.Bot.Understanding;
 
 public class MenuOptions
 {
@@ -15,6 +19,7 @@ public class MenuOptions
 		GameObject mainParentBody = (Selection.activeObject) as GameObject;
 		if (mainParentBody != null)
 		{
+			//Add all of the components
 			mainParentBody.AddComponent<Animator>();
 			mainParentBody.AddComponent<HeadRotator>();
 			mainParentBody.AddComponent<FacePositionList>();
@@ -24,11 +29,11 @@ public class MenuOptions
 			mainParentBody.GetComponent<SetFaceShapes>().mesh = mainParentBody.transform.GetComponentInChildren<SkinnedMeshRenderer>();
 			mainParentBody.GetComponent<SetFaceShapes>().list = mainParentBody.GetComponent<FacePositionList>();
 			mainParentBody.AddComponent<CheckForQuestion>();
-			mainParentBody.AddComponent<WatsonTone>();
 			mainParentBody.AddComponent<Blink>();
 
 		}
 	}
+	//Only enable the menu option if this is valid.
 	[MenuItem("VolumeAI/Generate Body Components", true, 1)]
 	public static bool FaceSetupValidation()
 	{
@@ -49,6 +54,7 @@ public class MenuOptions
 		spawnedObject.AddComponent<HeadBob>();
 	}
 
+	//Azure voice out spawning
 	[MenuItem("VolumeAI/Voice Out/Generate Azure", false, 3)]
 	public static void SpawnAzureVoiceOut()
 	{
@@ -71,6 +77,7 @@ public class MenuOptions
 		spawnedObject.AddComponent<WatsonVoiceIn>();
 	}
 
+	//Spawn Windows voice in
 	[MenuItem("VolumeAI/Voice In/Generate Windows", false, 5)]
 	public static void SpawnWindowsVoiceIn()
 	{
@@ -80,7 +87,6 @@ public class MenuOptions
 	}
 
 	//Understanding/AI dialogue connection
-
 	[MenuItem("VolumeAI/Understanding/Generate Watson", false, 6)]
 	public static void SpawnWatsonUnderstanding()
 	{
@@ -89,6 +95,7 @@ public class MenuOptions
 		spawnedObject.AddComponent<WatsonUnderstanding>();
 
 	}
+	//Spawn in the Volume understanding
 	[MenuItem("VolumeAI/Understanding/Generate Volume (Unavailable)", false, 7)]
 	public static void SpawnVolumeUnderstanding()
 	{
@@ -97,7 +104,7 @@ public class MenuOptions
 		spawnedObject.name = "Volume Understanding (Not Available)";
 	}
 
-	//Tone
+	//Tone spawning
 	[MenuItem("VolumeAI/Tone/Generate Watson", false, 8)]
 	public static void SpawnWatsonTone()
 	{
@@ -122,11 +129,13 @@ public class MenuOptions
 		Application.OpenURL("https://github.com/Om8/VolumeAIBot/wiki");
 	}
 
+	//All of the voices that watson have to offer
 	[MenuItem("VolumeAI/Documentation/Watson Voices", false, 52)]
 	public static void OpenWatsonVoices()
 	{
 		Application.OpenURL("https://cloud.ibm.com/docs/text-to-speech?topic=text-to-speech-voices");
 	}
+	//All of the voices that azure has to offer
 	[MenuItem("VolumeAI/Documentation/Azure Voices", false, 53)]
 	public static void OpenAzureVoices()
 	{
@@ -140,6 +149,7 @@ public class MenuOptions
 		bool preferAzureVoiceOutput = true;
 		bool preferWindowsVoiceIn = true;
 
+		//Find all objects in scene
 		WindowsVoiceInput windowsInputRef = GameObject.FindObjectOfType<WindowsVoiceInput>();
 		WatsonVoiceIn watsonInputRef = GameObject.FindObjectOfType<WatsonVoiceIn>();
 		WatsonTone toneRef = GameObject.FindObjectOfType<WatsonTone>();
@@ -168,7 +178,7 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Windows Voice In");
+				Debug.LogError("Missing components | Windows Voice In | Trying Watson");
 				if (watsonInputRef != null && headRotatorRef != null && understandingRef != null && toneRef != null && faceShapeRef != null)
 				{
 					UnityEventTools.AddPersistentListener(watsonInputRef.audioInput, understandingRef.InputMessage);
@@ -180,7 +190,7 @@ public class MenuOptions
 				}
 				else
 				{
-					Debug.LogError("Missing components | Watson Voice In | NO VOICE INPUT IN SCENE");
+					Debug.LogError("NO VOICE INPUT IN SCENE");
 				}
 			}
 		}
@@ -197,7 +207,21 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Watson Voice In");
+				Debug.LogError("Missing components | Watson Voice In | Trying Windows");
+				if (windowsInputRef != null && headRotatorRef != null && understandingRef != null && toneRef != null && faceShapeRef != null)
+				{
+					windowsInputRef.spokenTo.RemoveAllListeners();
+					UnityEventTools.AddPersistentListener(windowsInputRef.spokenTo, understandingRef.InputMessage);
+					UnityEventTools.AddPersistentListener(windowsInputRef.spokenTo, toneRef.GetTone);
+					UnityEventTools.AddStringPersistentListener(windowsInputRef.spokenTo, faceShapeRef.SetEmotion, "Think");
+					UnityEventTools.AddPersistentListener(windowsInputRef.spokenTo, localResponseRef.QuestionChecker);
+
+					UnityEventTools.AddPersistentListener(windowsInputRef.hasInteracted, headRotatorRef.StartedInteracting);
+				}
+				else
+				{
+					Debug.LogError("NO VOICE INPUT IN SCENE");
+				}
 			}
 		}
 
@@ -210,7 +234,15 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Azure Voice Out");
+				Debug.LogError("Missing components | Azure Voice Out | Trying Watson");
+				if (understandingRef != null && watsonOutRef != null)
+				{
+					UnityEventTools.AddPersistentListener(understandingRef.returnedMessage, watsonOutRef.InputText);
+				}
+				else
+				{
+					Debug.LogError("NO VOICE OUT");
+				}
 			}
 		}
 		else
@@ -221,7 +253,15 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Watson Voice Out");
+				Debug.LogError("Missing components | Watson Voice Out | Trying Azure");
+				if (understandingRef != null && azureVoiceOutRef != null)
+				{
+					UnityEventTools.AddPersistentListener(understandingRef.returnedMessage, azureVoiceOutRef.PlayAudio);
+				}
+				else
+				{
+					Debug.LogError("NO VOICE OUT");
+				}
 			}
 		}
 		if(understandingRef != null && toneRef != null && headRotatorRef != null)
@@ -250,6 +290,26 @@ public class MenuOptions
 					Debug.LogError("No voice input to return to from voice output");
 				}
 			}
+			else
+			{
+				if (watsonOutRef != null && faceShapeRef != null && setBodyRef != null)
+				{
+					UnityEventTools.AddPersistentListener(watsonOutRef.finishedEvent, faceShapeRef.FinishedSpeaking);
+					UnityEventTools.AddStringPersistentListener(watsonOutRef.finishedEvent, setBodyRef.SetBodyEmotion, "Base");
+					if (preferWindowsVoiceIn && windowsInputRef != null)
+					{
+						UnityEventTools.AddPersistentListener(watsonOutRef.finishedEvent, windowsInputRef.CanSpeakAgain);
+					}
+					else if (watsonInputRef != null)
+					{
+						UnityEventTools.AddPersistentListener(watsonOutRef.finishedEvent, watsonInputRef.CanSpeakAgain);
+					}
+					else
+					{
+						Debug.LogError("No voice input to return to from voice output");
+					}
+				}
+			}
 		}
 		else
 		{
@@ -270,6 +330,26 @@ public class MenuOptions
 					Debug.LogError("No voice input to return to from voice output");
 				}
 			}
+			else
+			{
+				if (azureVoiceOutRef != null && faceShapeRef != null && setBodyRef != null)
+				{
+					UnityEventTools.AddPersistentListener(azureVoiceOutRef.finishedEvent, faceShapeRef.FinishedSpeaking);
+					UnityEventTools.AddStringPersistentListener(azureVoiceOutRef.finishedEvent, setBodyRef.SetBodyEmotion, "Base");
+					if (preferWindowsVoiceIn && windowsInputRef != null)
+					{
+						UnityEventTools.AddPersistentListener(azureVoiceOutRef.finishedEvent, windowsInputRef.CanSpeakAgain);
+					}
+					else if (watsonInputRef != null)
+					{
+						UnityEventTools.AddPersistentListener(azureVoiceOutRef.finishedEvent, watsonInputRef.CanSpeakAgain);
+					}
+					else
+					{
+						Debug.LogError("No voice input to return to from voice output");
+					}
+				}
+			}
 		}
 
 		//Tone checker
@@ -278,7 +358,11 @@ public class MenuOptions
 			UnityEventTools.AddPersistentListener(toneRef.responseTone, faceShapeRef.SetEmotion);
 			UnityEventTools.AddPersistentListener(toneRef.responseTone, setBodyRef.SetBodyEmotion);
 		}
-	}
+		else
+		{
+			Debug.LogError("Missing components | Tone Checker | You can ignore this one.");
+		}
 
+	}
 
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+using AI.Volume.Bot.Audio;
+using AI.Volume.Bot.Data;
+using AI.Volume.Bot.Visual;
 
 public class MouthPositionEditor : EditorWindow
 {
@@ -162,7 +164,6 @@ public class MouthPositionEditor : EditorWindow
 			//GUILayout.EndScrollView();
 			EditorGUILayout.BeginVertical();
 			GUILayout.Label("Region array", EditorStyles.label);
-			//scrollPosNums = GUILayout.BeginScrollView(scrollPosNums, false, true, GUILayout.Width(300), GUILayout.Height(200));
 			BlendShapeArray();
 
 			EditorGUILayout.EndVertical();

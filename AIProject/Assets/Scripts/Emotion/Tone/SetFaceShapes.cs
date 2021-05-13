@@ -2,96 +2,97 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using AI.Volume.Bot.Data;
+using AI.Volume.Bot.Visual;
 
-public class SetFaceShapes : MonoBehaviour
+namespace AI.Volume.Bot.Tone
 {
-	[SerializeField, CannotBeNullObjectField]
-	public SkinnedMeshRenderer mesh;
-	[SerializeField, CannotBeNullObjectField]
-	public FacePositionList list;
-	[SerializeField]
-	float lerpSpeed = 10;
-
-	[SerializeField]
-	int currentFacePose;
-
-	string[] comparison = { "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative"};
-	//options = new string[] { "Base", "Happy", "Surprise", "Fear", "Disgust", "Anger", "Sad" };
-
-	public void FinishedSpeaking()
+	public class SetFaceShapes : MonoBehaviour
 	{
-		SetEmotion("Base");
-	}
+		[SerializeField, CannotBeNullObjectField]
+		public SkinnedMeshRenderer mesh;
+		[SerializeField, CannotBeNullObjectField]
+		public FacePositionList list;
+		[SerializeField]
+		float lerpSpeed = 10;
 
-	/// <summary>
-	/// Set the current emotion of the bot.
-	/// </summary>
-	/// <param name="emotion">New emotion, needs to be one of the following: "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative" </param>
-	public void SetEmotion(string emotion)
-	{
-		switch (emotion)
+		[SerializeField]
+		int currentFacePose;
+
+		string[] comparison = { "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative" };
+
+		//Dictionary to convert emotions to a number, which will set face and body.
+		Dictionary<string, int> emotionStates = new Dictionary<string, int>()
 		{
-			case "Base":
-				currentFacePose = 0;
-				break;
-			case "Anger":
-				currentFacePose = 5;
-				break;
-			case "Fear":
-				currentFacePose = 3;
-				break;
-			case "Joy":
-				currentFacePose = 1;
-				break;
-			case "Sadness":
-				currentFacePose = 6;
-				break;
-			case "Analytical":
-				currentFacePose = 2;
-				break;
-			case "Confident":
-				currentFacePose = 0;
-				break;
-			case "Tentative":
-				currentFacePose = 4;
-				break;
-			case "Think":
-				currentFacePose = 7;
-				break;
+			{"Base", 0 },
+			{"Anger", 5 },
+			{"Fear", 3 },
+			{"Joy", 1 },
+			{"Sadness", 6 },
+			{"Analytical", 2 },
+			{"Confident", 0 },
+			{"Tentative", 4 },
+		};
+
+		public void FinishedSpeaking()
+		{
+			SetEmotion("Base");
 		}
-	}
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.RightArrow)) currentFacePose++;
-		if (Input.GetKeyDown(KeyCode.LeftArrow)) currentFacePose--;
-
-		if(mesh != null && list != null)
+		/// <summary>
+		/// Set the current emotion of the bot.
+		/// </summary>
+		/// <param name="emotion">New emotion, needs to be one of the following: "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative" </param>
+		public void SetEmotion(string emotion)
 		{
-			if (currentFacePose <= 7 && currentFacePose >= 0)
+			//If it is in the dictionary, then set the value
+			if (emotionStates.TryGetValue(emotion, out int val))
 			{
-				if (mesh.sharedMesh.blendShapeCount == list.blendShapeList.Length)
+				currentFacePose = val;
+			}
+			//Else set it to base.
+			else
+			{
+				currentFacePose = 0;
+			}
+		}
+
+		private void Update()
+		{
+			if (mesh != null && list != null)
+			{
+				if (currentFacePose <= 7 && currentFacePose >= 0)
 				{
-					for (int i = 0; i < mesh.sharedMesh.blendShapeCount; i++)
+					if (mesh.sharedMesh.blendShapeCount == list.blendShapeList.Length)
 					{
-						if (list.blendShapeList[i] == FaceRegion.Face)
+						for (int i = 0; i < mesh.sharedMesh.blendShapeCount; i++)
 						{
-							float lerpedValue = Mathf.Lerp(mesh.GetBlendShapeWeight(i), list.facePositions[currentFacePose].blendShapes[i], Time.deltaTime * lerpSpeed);
-							mesh.SetBlendShapeWeight(i, lerpedValue);
+							if (list.blendShapeList[i] == FaceRegion.Face)
+							{
+								//Lerp the face to the current shape.
+								float lerpedValue = Mathf.Lerp(mesh.GetBlendShapeWeight(i), list.facePositions[currentFacePose].blendShapes[i], Time.deltaTime * lerpSpeed);
+								mesh.SetBlendShapeWeight(i, lerpedValue);
+							}
 						}
 					}
 				}
 			}
 		}
-	}
 
-	public void SetThinking()
-	{
-		SetEmotion("Think");
-	}
+		/// <summary>
+		/// Set the thinking state
+		/// </summary>
+		public void SetThinking()
+		{
+			SetEmotion("Think");
+		}
 
-	public void StopThinking()
-	{
-		SetEmotion("Base");
+		/// <summary>
+		/// Stop thinking state
+		/// </summary>
+		public void StopThinking()
+		{
+			SetEmotion("Base");
+		}
 	}
 }

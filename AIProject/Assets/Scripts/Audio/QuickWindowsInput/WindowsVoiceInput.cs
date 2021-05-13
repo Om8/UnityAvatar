@@ -4,73 +4,128 @@ using UnityEngine;
 using UnityEngine.Windows.Speech;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using AI.Volume.Bot.Events;
 
-public class WindowsVoiceInput : MonoBehaviour
+namespace AI.Volume.Bot.Audio
 {
-
-	DictationRecognizer voiceDictation;
-	[SerializeField]
-	public UnityEvent hasInteracted;
-	[SerializeField]
-	public AudioEvent spokenTo;
-	
-
-	// Start is called before the first frame update
-	void Start()
-    {
-		voiceDictation = new DictationRecognizer();
-
-
-		voiceDictation.DictationHypothesis += (text) =>
-		{
-			hasInteracted.Invoke();
-		};
-
-		voiceDictation.DictationResult += DictationResult;
-		voiceDictation.DictationError += DictationError;
-
-		voiceDictation.Start();
-		voiceDictation.AutoSilenceTimeoutSeconds = 20000;
-		voiceDictation.InitialSilenceTimeoutSeconds = 20000;
-	}
-
-	void DictationResult(string text, ConfidenceLevel confidence)
+	public class WindowsVoiceInput : MonoBehaviour
 	{
-		spokenTo.Invoke(text);
-		voiceDictation.Stop();
-		//voiceDictation.Dispose();
-	}
+		//Voice detection recogniser
+		DictationRecognizer voiceDictation;
+		//Calls when the user first speaks to the bot.
+		public UnityEvent hasInteracted;
+		//Calls when the bot has finished understanding what the player has said.
+		public AudioEvent spokenTo;
+		[SerializeField, Tooltip("Is spatial, does the voice input have range?")]
+		bool spatial = false;
+		[SerializeField, Tooltip("How far can the bot hear? This requires spatial to be turned on")]
+		float spatialRange = 1f;
 
-	public void CanSpeakAgain()
-	{
-		if (voiceDictation.Status != SpeechSystemStatus.Running)
+
+		// Start is called before the first frame update
+		void Start()
 		{
+			//Create a new voice recogniser.
+			voiceDictation = new DictationRecognizer();
+
+			//Hypothesis, quick responses.
+			voiceDictation.DictationHypothesis += (text) =>
+			{
+				if (spatial && Camera.main != null)
+				{
+					if (Vector3.Distance(Camera.main.transform.position, this.transform.position) <= spatialRange)
+					{
+						if(hasInteracted != null) hasInteracted.Invoke();
+					}
+				}
+				else
+				{
+					if (hasInteracted != null) hasInteracted.Invoke();
+				}
+			};
+
+			//Assign result and error.
+			voiceDictation.DictationResult += DictationResult;
+			voiceDictation.DictationError += DictationError;
+
+			//Start voice detection
 			voiceDictation.Start();
+			voiceDictation.AutoSilenceTimeoutSeconds = 20000;
+			voiceDictation.InitialSilenceTimeoutSeconds = 20000;
 		}
-	}
 
-	private void OnApplicationFocus(bool focus)
-	{
-		if (voiceDictation != null)
+		/// <summary>
+		/// Dictation result, this is the result function that returns when there is a successful result.
+		/// </summary>
+		/// <param name="text">Final text</param>
+		/// <param name="confidence">How confident the system is</param>
+		void DictationResult(string text, ConfidenceLevel confidence)
+		{
+			//Check if spatial
+			if (spatial && Camera.main != null)
+			{
+				if (Vector3.Distance(Camera.main.transform.position, this.transform.position) <= spatialRange)
+				{
+					if (spokenTo != null)
+					{
+						spokenTo.Invoke(text);
+						voiceDictation.Stop();
+					}
+				}
+			}
+			//Play anyway
+			else
+			{
+				if (spokenTo != null)
+				{
+					spokenTo.Invoke(text);
+					voiceDictation.Stop();
+				}
+			}
+		}
+
+		/// <summary>
+		/// The user can speak to the bot again, call at end of voice output.
+		/// </summary>
+		public void CanSpeakAgain()
 		{
 			if (voiceDictation.Status != SpeechSystemStatus.Running)
 			{
 				voiceDictation.Start();
 			}
 		}
-	}
 
-	private void OnDestroy()
-	{
-		if (voiceDictation.Status == SpeechSystemStatus.Running)
+		/// <summary>
+		/// On refocus, turn on the voice again. Windows voice turns off as soon as focus is lost.
+		/// </summary>
+		/// <param name="focus"></param>
+		private void OnApplicationFocus(bool focus)
 		{
-			voiceDictation.Stop();
-			voiceDictation.Dispose();
+			if (voiceDictation != null)
+			{
+				if (voiceDictation.Status != SpeechSystemStatus.Running)
+				{
+					voiceDictation.Start();
+				}
+			}
 		}
-	}
 
-	void DictationError(string error, int result)
-	{
-		Debug.Log(error + " || number: " + result);
+		/// <summary>
+		/// End of the session, dispose of voice threads.
+		/// </summary>
+		private void OnDestroy()
+		{
+			if (voiceDictation.Status == SpeechSystemStatus.Running)
+			{
+				voiceDictation.Stop();
+				voiceDictation.Dispose();
+			}
+		}
+
+		//On error, debug log the error.
+		void DictationError(string error, int result)
+		{
+			Debug.Log(error + " || number: " + result);
+		}
 	}
 }

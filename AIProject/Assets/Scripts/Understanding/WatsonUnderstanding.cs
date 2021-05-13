@@ -8,107 +8,110 @@ using IBM.Cloud.SDK.Authentication.Iam;
 using IBM.Cloud.SDK.Utilities;
 using IBM.Watson.Assistant.V2;
 using IBM.Watson.Assistant.V2.Model;
+using AI.Volume.Bot.Events;
 
-public class WatsonUnderstanding : MonoBehaviour
+namespace AI.Volume.Bot.Understanding
 {
-	#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
-	[Space(10)]
-	[SerializeField, Tooltip("The IAM apikey.")]
-	string iamApikey;
-	[SerializeField, Tooltip("The service URL (optional). This defaults to \"https://api.us-south.assistant.watson.cloud.ibm.com\"")]
-	string serviceUrl;
-	[SerializeField, Tooltip("The version date with which you would like to use the service in the form YYYY-MM-DD.")]
-	string versionDate;
-	[SerializeField, Tooltip("The assistantId to run the example.")]
-	string assistantId;
-	[SerializeField]
-	public AudioEvent returnedMessage;
-
-	#endregion
-
-	private AssistantService service;
-
-	private string sessionId;
-
-	private void Start()
+	public class WatsonUnderstanding : MonoBehaviour
 	{
-		LogSystem.InstallDefaultReactors();
-		Runnable.Run(CreateService());
-	}
+		#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
+		[Space(10)]
+		[SerializeField, Tooltip("The IAM apikey.")]
+		string iamApikey;
+		[SerializeField, Tooltip("The service URL (optional). This defaults to \"https://api.us-south.assistant.watson.cloud.ibm.com\"")]
+		string serviceUrl;
+		[SerializeField, Tooltip("The version date with which you would like to use the service in the form YYYY-MM-DD.")]
+		string versionDate;
+		[SerializeField, Tooltip("The assistantId to run the example.")]
+		string assistantId;
+		[SerializeField]
+		public AudioEvent returnedMessage;
 
-	private IEnumerator CreateService()
-	{
-		if (string.IsNullOrEmpty(iamApikey))
+		#endregion
+
+		private AssistantService service;
+
+		private string sessionId;
+
+		private void Start()
 		{
-			throw new IBMException("Plesae provide IAM ApiKey for the service.");
+			LogSystem.InstallDefaultReactors();
+			Runnable.Run(CreateService());
 		}
 
-		//  Create credential and instantiate service
-		IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
-
-		//  Wait for tokendata
-		while (!authenticator.CanAuthenticate())
-			yield return null;
-
-		service = new AssistantService(versionDate, authenticator);
-		if (!string.IsNullOrEmpty(serviceUrl))
+		private IEnumerator CreateService()
 		{
-			service.SetServiceUrl(serviceUrl);
-		}
-
-		CreateSession();
-	}
-
-
-	/// <summary>
-	/// Input a string for Watson to try give a response.
-	/// </summary>
-	/// <param name="message">Message you want to send to Watson</param>
-	public void InputMessage(string message)
-	{
-		var input1 = new MessageInput()
-		{
-			Text = message,
-			Options = new MessageInputOptions()
+			if (string.IsNullOrEmpty(iamApikey))
 			{
-				ReturnContext = true
+				throw new IBMException("Plesae provide IAM ApiKey for the service.");
 			}
-		};
-		service.Message(OnMessageReturned, assistantId, sessionId, input: input1);
-	}
 
-	//Create session.
-	void CreateSession()
-	{
-		service.CreateSession(OnCreateSession, assistantId);
-	}
+			//  Create credential and instantiate service
+			IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
 
-	//Call delete session.
-	void DeleteSession()
-	{
-		service.DeleteSession(OnDeleteSession, assistantId, sessionId);
-	}
+			//  Wait for tokendata
+			while (!authenticator.CanAuthenticate())
+				yield return null;
 
-	//Session is deleted.
-	private void OnDeleteSession(DetailedResponse<object> response, IBMError error)
-	{
-		Log.Debug("ExampleAssistantV2.OnDeleteSession()", "Session deleted.");
-	}
+			service = new AssistantService(versionDate, authenticator);
+			if (!string.IsNullOrEmpty(serviceUrl))
+			{
+				service.SetServiceUrl(serviceUrl);
+			}
 
-	//Watson has given us a response.
-	private void OnMessageReturned(DetailedResponse<MessageResponse> response, IBMError error)
-	{
-		
-		//Log.Debug("ExampleAssistantV2.OnMessage0()", "response: {0}", response.Result.Output.Generic[0].Text);
-		returnedMessage.Invoke(response.Result.Output.Generic[0].Text);
-	}
+			CreateSession();
+		}
 
-	//Session created.
-	private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
-	{
-		//Log.Debug("ExampleAssistantV2.OnCreateSession()", "Session: {0}", response.Result.SessionId);
-		sessionId = response.Result.SessionId;
+
+		/// <summary>
+		/// Input a string for Watson to try give a response.
+		/// </summary>
+		/// <param name="message">Message you want to send to Watson</param>
+		public void InputMessage(string message)
+		{
+			var input1 = new MessageInput()
+			{
+				Text = message,
+				Options = new MessageInputOptions()
+				{
+					ReturnContext = true
+				}
+			};
+			service.Message(OnMessageReturned, assistantId, sessionId, input: input1);
+		}
+
+		//Create session.
+		void CreateSession()
+		{
+			service.CreateSession(OnCreateSession, assistantId);
+		}
+
+		//Call delete session.
+		void DeleteSession()
+		{
+			service.DeleteSession(OnDeleteSession, assistantId, sessionId);
+		}
+
+		//Session is deleted.
+		private void OnDeleteSession(DetailedResponse<object> response, IBMError error)
+		{
+			Log.Debug("ExampleAssistantV2.OnDeleteSession()", "Session deleted.");
+		}
+
+		//Watson has given us a response.
+		private void OnMessageReturned(DetailedResponse<MessageResponse> response, IBMError error)
+		{
+
+			//Log.Debug("ExampleAssistantV2.OnMessage0()", "response: {0}", response.Result.Output.Generic[0].Text);
+			if(returnedMessage != null) returnedMessage.Invoke(response.Result.Output.Generic[0].Text);
+		}
+
+		//Session created.
+		private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
+		{
+			//Log.Debug("ExampleAssistantV2.OnCreateSession()", "Session: {0}", response.Result.SessionId);
+			sessionId = response.Result.SessionId;
+		}
 	}
 }
-
 

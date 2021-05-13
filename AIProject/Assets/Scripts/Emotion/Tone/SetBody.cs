@@ -2,66 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SetBody : MonoBehaviour
+namespace AI.Volume.Bot.Tone
 {
-	[SerializeField, CannotBeNullObjectField]
-	public Animator animationController;
-
-	[SerializeField]
-	string animationIntName = "Emotion";
-	
-	/// <summary>
-	/// Set the body emotion of the avatar. 
-	/// </summary>
-	/// <param name="emotion">Has to be one of the following to get a result: Base, Anger, Fear, Joy, Sadness, Analytical, Confident, Tentative</param>
-	public void SetBodyEmotion(string emotion)
+	public class SetBody : MonoBehaviour
 	{
-		switch (emotion)
-		{
-			case "Base":
-				setAnim(0);
-				break;
-			case "Anger":
-				setAnim(5);
-				break;
-			case "Fear":
-				setAnim(3);
-				break;
-			case "Joy":
-				setAnim(1);
-				break;
-			case "Sadness":
-				setAnim(6);
-				break;
-			case "Analytical":
-				setAnim(2);
-				break;
-			case "Confident":
-				setAnim(0);
-				break;
-			case "Tentative":
-				setAnim(4);
-				break;
-			default:
-				setAnim(0);
-				break;
-		}
-	
-	}
+		[SerializeField, CannotBeNullObjectField]
+		public Animator animationController;
 
-	/// <summary>
-	/// Set the animation in the animation controller
-	/// </summary>
-	/// <param name="num">Number has to be between 0-6 to give you a result.</param>
-	void setAnim(int num)
-	{
-		if (num >= 0 && num <= 6)
+		[SerializeField]
+		string animationIntName = "Emotion";
+
+		//Dictionary to convert emotions to a number, which will set face and body.
+		Dictionary<string, int> emotionStates = new Dictionary<string, int>()
 		{
-			animationController.SetInteger(animationIntName, num);
+			{"Base", 0 },
+			{"Anger", 5 },
+			{"Fear", 3 },
+			{"Joy", 1 },
+			{"Sadness", 6 },
+			{"Analytical", 2 },
+			{"Confident", 0 },
+			{"Tentative", 4 },
+		};
+
+		/// <summary>
+		/// Set the body emotion of the avatar. 
+		/// </summary>
+		/// <param name="emotion">Has to be one of the following to get a result: Base, Anger, Fear, Joy, Sadness, Analytical, Confident, Tentative</param>
+		public void SetBodyEmotion(string emotion)
+		{
+			//If it is in the dictionary, then set the value
+			if(emotionStates.TryGetValue(emotion, out int val))
+			{
+				setAnim(val);
+			}
+			//Else set it to base.
+			else
+			{
+				setAnim(0);
+			}
+
 		}
-		else
+
+		/// <summary>
+		/// Set the animation in the animation controller
+		/// </summary>
+		/// <param name="num">Number has to be between 0-6 to give you a result.</param>
+		void setAnim(int num)
 		{
-			Debug.LogWarning("Set anim number out of range");
+			if (num >= 0 && num <= 6)
+			{
+				animationController.SetInteger(animationIntName, num);
+			}
+			else
+			{
+				Debug.LogWarning("Set anim number out of range");
+			}
 		}
 	}
 }
