@@ -66,7 +66,7 @@ namespace AI.Volume.Bot.Tone
 		[SerializeField]
 		public AudioEvent responseTone;
 
-		List<FaceEmotionJson> listOfEmotions = new List<FaceEmotionJson>();
+		private List<FaceEmotionJson> listOfEmotions = new List<FaceEmotionJson>();
 
 		private void Start()
 		{
@@ -148,7 +148,7 @@ namespace AI.Volume.Bot.Tone
 		}
 
 		//Parse the tone into something readable and useable.
-		string FindStrongestEmotion(string input)
+		private string FindStrongestEmotion(string input)
 		{
 			//Remove start and end.
 			input = input.Replace("\"document_tone\":{\"tones\":[{", "");

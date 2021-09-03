@@ -10,35 +10,35 @@ public class MouthPositionEditor : EditorWindow
 {
 	//Public variables
 	[SerializeField, Tooltip("Mesh that you want to pose and save"), CannotBeNullObjectField]
-	SkinnedMeshRenderer mesh = null;
+	private SkinnedMeshRenderer mesh = null;
 	[SerializeField, Tooltip("List that you want to save your data to"), CannotBeNullObjectField]
-	FacePositionList list = null;
+	private FacePositionList list = null;
 	[SerializeField]
-	AzureLocalVoice localSaver;
+	private AzureLocalVoice localSaver;
 	[SerializeField, CannotBeNullObjectField]
-	GameObject mainParentBody;
+	private GameObject mainParentBody;
 
-	SerializedProperty listOfShapes;
+	private SerializedProperty listOfShapes;
 
-	int currentEditing = 0;
+	private int currentEditing = 0;
 
 	//Selected pose
-	int selected = 0;
-	int lastSelected = 0;
+	private int selected = 0;
+	private int lastSelected = 0;
 
-	int faceLength = 8;
+	private int faceLength = 8;
 
 	//Blend space scroll bar
-	Vector2 scrollPosNums;
-	Vector2 scrollPosArray;
+	private Vector2 scrollPosNums;
+	private Vector2 scrollPosArray;
 
-	int currentTab = 0;
+	private int currentTab = 0;
 
-	string[] tabOptions = { "Adjustments", "Local Response" };
+	private string[] tabOptions = { "Adjustments", "Local Response" };
 
 	//Local saving
-	string voiceOutput = "Test Audio";
-	string fileName = "AudioTest";
+	private string voiceOutput = "Test Audio";
+	private string fileName = "AudioTest";
 
 	[MenuItem("VolumeAI/Open Editor Window")]
 	static void Init()
@@ -62,7 +62,7 @@ public class MouthPositionEditor : EditorWindow
 		}
 	}
 
-	void SavingVoice()
+	private void SavingVoice()
 	{
 		fileName = EditorGUILayout.TextField("File name: ", fileName);
 		voiceOutput = EditorGUILayout.TextField("Text to speech: ", voiceOutput);
@@ -73,7 +73,7 @@ public class MouthPositionEditor : EditorWindow
 	}
 
 
-	void FacePoseAdjusting()
+	private void FacePoseAdjusting()
 	{
 		//Variable inputs
 		GUILayout.Label("Required inputs", EditorStyles.boldLabel);
@@ -128,7 +128,7 @@ public class MouthPositionEditor : EditorWindow
 		}		
 	}
 
-	void BlendShapeArray()
+	private void BlendShapeArray()
 	{
 		if (Event.current.type == EventType.Layout)
 		{
@@ -143,7 +143,7 @@ public class MouthPositionEditor : EditorWindow
 		serialisedObject.ApplyModifiedProperties();
 	}
 
-	void BlendShapeSelection()
+	private void BlendShapeSelection()
 	{
 		if (mesh != null && list != null)
 		{
@@ -175,7 +175,7 @@ public class MouthPositionEditor : EditorWindow
 		}
 	}
 
-	void MouthPositionEdits()
+	private void MouthPositionEdits()
 	{
 		//The 16 face shapes + base shape
 		string[] options = { "Base" };

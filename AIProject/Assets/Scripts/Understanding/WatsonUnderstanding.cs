@@ -17,14 +17,14 @@ namespace AI.Volume.Bot.Understanding
 		#region PLEASE SET THESE VARIABLES IN THE INSPECTOR
 		[Space(10)]
 		[SerializeField, Tooltip("The IAM apikey.")]
-		string iamApikey;
+		private string iamApikey;
 		[SerializeField, Tooltip("The service URL (optional). This defaults to \"https://api.us-south.assistant.watson.cloud.ibm.com\"")]
-		string serviceUrl;
+		private string serviceUrl;
 		[SerializeField, Tooltip("The version date with which you would like to use the service in the form YYYY-MM-DD.")]
-		string versionDate;
+		private string versionDate;
 		[SerializeField, Tooltip("The assistantId to run the example.")]
-		string assistantId;
-		[SerializeField]
+		private string assistantId;
+
 		public AudioEvent returnedMessage;
 
 		#endregion
@@ -81,13 +81,13 @@ namespace AI.Volume.Bot.Understanding
 		}
 
 		//Create session.
-		void CreateSession()
+		private void CreateSession()
 		{
 			service.CreateSession(OnCreateSession, assistantId);
 		}
 
 		//Call delete session.
-		void DeleteSession()
+		private void DeleteSession()
 		{
 			service.DeleteSession(OnDeleteSession, assistantId, sessionId);
 		}
@@ -101,15 +101,12 @@ namespace AI.Volume.Bot.Understanding
 		//Watson has given us a response.
 		private void OnMessageReturned(DetailedResponse<MessageResponse> response, IBMError error)
 		{
-
-			//Log.Debug("ExampleAssistantV2.OnMessage0()", "response: {0}", response.Result.Output.Generic[0].Text);
 			if(returnedMessage != null) returnedMessage.Invoke(response.Result.Output.Generic[0].Text);
 		}
 
 		//Session created.
 		private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
 		{
-			//Log.Debug("ExampleAssistantV2.OnCreateSession()", "Session: {0}", response.Result.SessionId);
 			sessionId = response.Result.SessionId;
 		}
 	}

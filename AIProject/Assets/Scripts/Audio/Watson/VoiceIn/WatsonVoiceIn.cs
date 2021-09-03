@@ -13,30 +13,39 @@ using AI.Volume.Bot.Events;
 
 namespace AI.Volume.Bot.Audio
 {
+	[RequireComponent(typeof(SpatialChecker))]
 	public class WatsonVoiceIn : MonoBehaviour
 	{
 
 		[Space(10)]
 		[SerializeField, Tooltip("The service URL (optional). This defaults to \"https://api.us-south.speech-to-text.watson.cloud.ibm.com\"")]
-		string _serviceUrl;
+		private string _serviceUrl;
 		[Header("IAM Authentication")]
 		[SerializeField, Tooltip("The IAM apikey.")]
-		string _iamApikey;
+		private string _iamApikey;
 
 		[Header("Parameters")]
 		// https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/curl.html?curl#get-model
 		[SerializeField, Tooltip("The Model to use. This defaults to en-US_BroadbandModel")]//This is a private variable because of the way it is.
-		string _recognizeModel;
+		private string _recognizeModel;
 		public AudioEvent audioInput;
 		public UnityEvent startedInteracting;
 
-		int _recordingRoutine = 0;
-		string _microphoneID = null;
-		AudioClip _recording = null;
-		int _recordingBufferSize = 1;
-		int _recordingHZ = 22050;
+		private int _recordingRoutine = 0;
+		private string _microphoneID = null;
+		private AudioClip _recording = null;
+		private int _recordingBufferSize = 1;
+		private int _recordingHZ = 22050;
 
-		SpeechToTextService _service;
+		//Spatial checker, checks if two objects are within range and within eye sight.
+		[SerializeField]
+		private SpatialChecker spatialChecker => this.gameObject.GetComponent<SpatialChecker>();
+		[SerializeField, Tooltip("Does this AI have a range where outside that range, they won't respond.")]
+		private bool spatial = false;
+		[SerializeField, Tooltip("The max distance for AI communication")]
+		private float spatialRange = 2;
+
+		private SpeechToTextService _service;
 
 		//Calls on start
 		void Start()
@@ -196,26 +205,60 @@ namespace AI.Volume.Bot.Audio
 		/// <param name="result"></param>
 		private void OnRecognize(SpeechRecognitionEvent result)
 		{
-			if (result != null && result.results.Length > 0)
+			if (spatial)
 			{
-				foreach (var res in result.results)
+				if (spatialChecker != null)
 				{
-					if (res.final)
+					if (spatialChecker.IsInRange(this.gameObject, Camera.main.gameObject, spatialRange) && spatialChecker.LineOfSightChecker(this.gameObject, Camera.main.gameObject))
 					{
-						foreach (var alt in res.alternatives)
+						if (result != null && result.results.Length > 0)
 						{
-							//Call the spoken to function.
-							if (audioInput != null)
+							foreach (var res in result.results)
 							{
-								audioInput.Invoke(alt.transcript);
-								StopRecording();
+								if (res.final)
+								{
+									foreach (var alt in res.alternatives)
+									{
+										//Call the spoken to function.
+										if (audioInput != null)
+										{
+											audioInput.Invoke(alt.transcript);
+											StopRecording();
+										}
+									}
+								}
+							}
+							if (startedInteracting != null)
+							{
+								startedInteracting.Invoke();
 							}
 						}
 					}
 				}
-				if (startedInteracting != null)
+			}
+			else
+			{
+				if (result != null && result.results.Length > 0)
 				{
-					startedInteracting.Invoke();
+					foreach (var res in result.results)
+					{
+						if (res.final)
+						{
+							foreach (var alt in res.alternatives)
+							{
+								//Call the spoken to function.
+								if (audioInput != null)
+								{
+									audioInput.Invoke(alt.transcript);
+									StopRecording();
+								}
+							}
+						}
+					}
+					if (startedInteracting != null)
+					{
+						startedInteracting.Invoke();
+					}
 				}
 			}
 		}
@@ -231,7 +274,6 @@ namespace AI.Volume.Bot.Audio
 		public void CanSpeakAgain()
 		{
 			StartRecording();
-			Debug.Log("Started listening again");
 		}
 	}
 }

@@ -6,14 +6,14 @@ namespace AI.Volume.Bot.Tone
 {
 	public class SetBody : MonoBehaviour
 	{
-		[SerializeField, CannotBeNullObjectField]
+		[CannotBeNullObjectField]
 		public Animator animationController;
 
 		[SerializeField]
-		string animationIntName = "Emotion";
+		private string animationIntName = "Emotion";
 
 		//Dictionary to convert emotions to a number, which will set face and body.
-		Dictionary<string, int> emotionStates = new Dictionary<string, int>()
+		private Dictionary<string, int> emotionStates = new Dictionary<string, int>()
 		{
 			{"Base", 0 },
 			{"Anger", 5 },
@@ -48,7 +48,7 @@ namespace AI.Volume.Bot.Tone
 		/// Set the animation in the animation controller
 		/// </summary>
 		/// <param name="num">Number has to be between 0-6 to give you a result.</param>
-		void setAnim(int num)
+		private void setAnim(int num)
 		{
 			if (num >= 0 && num <= 6)
 			{

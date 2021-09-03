@@ -9,20 +9,20 @@ namespace AI.Volume.Bot.Tone
 {
 	public class SetFaceShapes : MonoBehaviour
 	{
-		[SerializeField, CannotBeNullObjectField]
+		[CannotBeNullObjectField]
 		public SkinnedMeshRenderer mesh;
-		[SerializeField, CannotBeNullObjectField]
+		[CannotBeNullObjectField]
 		public FacePositionList list;
 		[SerializeField]
-		float lerpSpeed = 10;
+		private float lerpSpeed = 10;
 
 		[SerializeField]
-		int currentFacePose;
+		private int currentFacePose;
 
-		string[] comparison = { "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative" };
+		private string[] comparison = { "Base", "Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative" };
 
 		//Dictionary to convert emotions to a number, which will set face and body.
-		Dictionary<string, int> emotionStates = new Dictionary<string, int>()
+		private Dictionary<string, int> emotionStates = new Dictionary<string, int>()
 		{
 			{"Base", 0 },
 			{"Anger", 5 },

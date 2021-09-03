@@ -8,9 +8,9 @@ namespace AI.Volume.Bot.Audio
 	public class CheckForQuestion : MonoBehaviour
 	{
 		[SerializeField, Tooltip("Different variations of sounds that can be played if the conditions are met")]
-		AudioClip[] variations;
+		private AudioClip[] variations;
 		[SerializeField, Tooltip("OVR audio source to play, make sure audio source is on the same object as an OVR morph target")]
-		AudioSource OVRSource;
+		private AudioSource OVRSource;
 
 		/// <summary>
 		/// Check whether a sentence has a question word in it, What, Where, When, Why, Who and How

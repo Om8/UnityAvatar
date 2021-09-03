@@ -46,12 +46,13 @@ namespace AI.Volume.Bot.Audio
 		private string synthesizeMimeType = "audio/wav";
 		#endregion
 
-		[SerializeField, Tooltip("The audio source for the audio output")]
+		[Tooltip("The audio source for the audio output")]
 		public AudioSource source;
 
-		[SerializeField, Tooltip("Finished talking, do stuff here")]
+		[Tooltip("Finished talking, do stuff here")]
 		public UnityEvent finishedEvent;
 
+		//Calls at the start.
 		private void Start()
 		{
 			if (source != null)
@@ -62,7 +63,7 @@ namespace AI.Volume.Bot.Audio
 			Runnable.Run(CreateService());
 		}
 
-
+		//Creates the service to connect online, make sure you have a valid key.
 		private IEnumerator CreateService()
 		{
 			if (string.IsNullOrEmpty(iamApikey))
@@ -84,7 +85,7 @@ namespace AI.Volume.Bot.Audio
 			}
 		}
 
-		#region Synthesize Example
+		//Create the actual audio.
 		private IEnumerator SynthesiseAudio(string text)
 		{
 			byte[] synthesizeResponse = null;
@@ -107,7 +108,7 @@ namespace AI.Volume.Bot.Audio
 			yield return new WaitForSeconds(clip.length);
 			if(finishedEvent != null) finishedEvent.Invoke();
 		}
-		#endregion
+
 
 		#region PlayClip
 		/// <summary>

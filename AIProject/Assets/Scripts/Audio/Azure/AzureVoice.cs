@@ -14,19 +14,19 @@ namespace AI.Volume.Bot.Audio
 {
 	public class AzureVoice : MonoBehaviour
 	{
-		//Variables
-		object threadLock = new object();
-		[SerializeField, CannotBeNullObjectField, Tooltip("Audio source for voice output")]
+		//Variables, these are a mix of public, private and serialised variables. The user can set these in the Unity inspector. 
+		private object threadLock = new object();
+		[CannotBeNullObjectField, Tooltip("Audio source for voice output")]
 		public AudioSource source = null;
 
 		[SerializeField, Tooltip("Required, check the Azure voices page to get a list of voice names, keep the same format.")]
-		string voiceName = "en-GB, RyanNeural";
+		private string voiceName = "en-GB, RyanNeural";
 		[SerializeField, Tooltip("Key found on Azure TTS webpage")]
-		string key;
+		private string key;
 		[SerializeField, Tooltip("Region that TTS server is located, default is uksouth")]
-		string region = "uksouth";
+		private string region = "uksouth";
 
-		[SerializeField, Tooltip("Calls at the end of the speech, used to reset voice input")]
+		[Tooltip("Calls at the end of the speech, used to reset voice input")]
 		public UnityEvent finishedEvent;
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace AI.Volume.Bot.Audio
 		/// </summary>
 		/// <param name="words">String passed through from play audio function. Words you want TTS to say.</param>
 		/// <returns></returns>
-		IEnumerator AudioPlayer(string words)
+		private IEnumerator AudioPlayer(string words)
 		{
 			//Create a speech config from a subscription, handing in a key and a region.
 			SpeechConfig config = SpeechConfig.FromSubscription(key, region);

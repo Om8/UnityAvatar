@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -262,6 +262,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  spatial: 0
+  spatialRange: 1
 --- !u!4 &501221117
 Transform:
   m_ObjectHideFlags: 0
@@ -637,7 +639,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362250885}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 1.463, z: 0.478}
+  m_LocalPosition: {x: 0, y: 1.463, z: 0.764}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -859,7 +861,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1492606979}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 45e68132c995348428c56edcc6484f3a, type: 3}
+  m_Avatar: {fileID: 0}
   m_Controller: {fileID: 22100000, guid: 0af63b5de6b55764ab851def5d4d6b4a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -2088,8 +2090,8 @@ MonoBehaviour:
   leftEye: {fileID: 1135241229}
   rightEye: {fileID: 137049848}
   headRoot: {fileID: 570367769}
-  maxTime: 2
-  minTime: 0.7
+  maxTimeSmallJump: 2
+  minTimeSmallJump: 0.7
   minTimesLookAround: 2
   maxTimeLookAround: 5
   lookDist: 3
@@ -2102,6 +2104,7 @@ MonoBehaviour:
   interactionMinTime: 0.5
   headRotationThreshold: 5
   headLerpSpeed: 2
+  maxTurnAngle: 50
   headBobScript: {fileID: 0}
   maxHeadSway: 0.004
   thinkOffsetSide: 0.1
@@ -2123,6 +2126,8 @@ MonoBehaviour:
   minTime: 1.4
   maxTime: 4
   blinkSpeedMultiplier: 700
+  leftEyeLid: 0
+  rightEyeLid: 1
   blinkLoopBool: 1
 --- !u!114 &1492606987
 MonoBehaviour:

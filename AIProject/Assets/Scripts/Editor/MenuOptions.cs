@@ -161,11 +161,13 @@ public class MenuOptions
 		HeadRotator headRotatorRef = GameObject.FindObjectOfType<HeadRotator>();
 		SetFaceShapes faceShapeRef = GameObject.FindObjectOfType<SetFaceShapes>();
 		SetBody setBodyRef = GameObject.FindObjectOfType<SetBody>();
+
 		CheckForQuestion localResponseRef = GameObject.FindObjectOfType<CheckForQuestion>();
 
 		//Voice Input
 		if (preferWindowsVoiceIn)
 		{
+
 			if(windowsInputRef != null && headRotatorRef != null && understandingRef != null && toneRef != null && faceShapeRef != null)
 			{
 				windowsInputRef.spokenTo.RemoveAllListeners();
@@ -178,7 +180,14 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Windows Voice In | Trying Watson");
+				Debug.LogError("Missing components -> Trying Watson");
+				if (windowsInputRef == null) Debug.LogError("Missing (Windows Input)");
+				if (headRotatorRef == null) Debug.LogError("Missing (Head Rotator script)");
+				if (understandingRef == null) Debug.LogError("Missing (Watson Understanding)");
+				if (toneRef == null) Debug.LogError("Missing (Watson Tone)");
+				if (faceShapeRef == null) Debug.LogError("Missing (Face Shape script)");
+
+
 				if (watsonInputRef != null && headRotatorRef != null && understandingRef != null && toneRef != null && faceShapeRef != null)
 				{
 					UnityEventTools.AddPersistentListener(watsonInputRef.audioInput, understandingRef.InputMessage);
@@ -190,7 +199,7 @@ public class MenuOptions
 				}
 				else
 				{
-					Debug.LogError("NO VOICE INPUT IN SCENE");
+					Debug.LogError("FAILED TO LINK WATSON. MAKE SURE TO SPAWN IN ALL REQUIRED COMPONENTS");
 				}
 			}
 		}
@@ -207,7 +216,12 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Watson Voice In | Trying Windows");
+				Debug.LogError("Missing components -> Trying Windows");
+				if (watsonInputRef == null) Debug.LogError("Missing (Watson Input)");
+				if (headRotatorRef == null) Debug.LogError("Missing (Head Rotator script)");
+				if (understandingRef == null) Debug.LogError("Missing (Watson Understanding)");
+				if (toneRef == null) Debug.LogError("Missing (Watson Tone)");
+				if (faceShapeRef == null) Debug.LogError("Missing (Face Shape script)");
 				if (windowsInputRef != null && headRotatorRef != null && understandingRef != null && toneRef != null && faceShapeRef != null)
 				{
 					windowsInputRef.spokenTo.RemoveAllListeners();
@@ -220,7 +234,7 @@ public class MenuOptions
 				}
 				else
 				{
-					Debug.LogError("NO VOICE INPUT IN SCENE");
+					Debug.LogError("FAILED TO LINK WINDOWS. MAKE SURE TO SPAWN IN ALL REQUIRED COMPONENTS");
 				}
 			}
 		}
@@ -234,14 +248,17 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Azure Voice Out | Trying Watson");
+				Debug.LogError("Missing components -> Trying Watson");
+				if (understandingRef == null) Debug.LogError("Missing (Watson Understanding)");
+				if (azureVoiceOutRef == null) Debug.LogError("Missing (Azure Voice Out)");
+
 				if (understandingRef != null && watsonOutRef != null)
 				{
 					UnityEventTools.AddPersistentListener(understandingRef.returnedMessage, watsonOutRef.InputText);
 				}
 				else
 				{
-					Debug.LogError("NO VOICE OUT");
+					Debug.LogError("FAILED TO LINK WINDOWS. MAKE SURE TO SPAWN IN ALL REQUIRED COMPONENTS");
 				}
 			}
 		}
@@ -253,14 +270,16 @@ public class MenuOptions
 			}
 			else
 			{
-				Debug.LogError("Missing components | Watson Voice Out | Trying Azure");
+				Debug.LogError("Missing components -> Trying Azure");
+				if (understandingRef == null) Debug.LogError("Missing (Watson Understanding)");
+				if (watsonOutRef == null) Debug.LogError("Missing (Watson Voice Out)");
 				if (understandingRef != null && azureVoiceOutRef != null)
 				{
 					UnityEventTools.AddPersistentListener(understandingRef.returnedMessage, azureVoiceOutRef.PlayAudio);
 				}
 				else
 				{
-					Debug.LogError("NO VOICE OUT");
+					Debug.LogError("FAILED TO LINK WINDOWS. MAKE SURE TO SPAWN IN ALL REQUIRED COMPONENTS");
 				}
 			}
 		}
@@ -268,6 +287,14 @@ public class MenuOptions
 		{
 			UnityEventTools.AddPersistentListener(understandingRef.returnedMessage, toneRef.GetTone);
 			UnityEventTools.AddVoidPersistentListener(understandingRef.returnedMessage, headRotatorRef.StartedInteracting);
+		}
+		else
+		{
+			Debug.LogError("Missing components when trying to connect understanding");
+			if (understandingRef == null) Debug.LogError("Missing (Watson Understanding)");
+			if (toneRef == null) Debug.LogError("Missing (Watson Tone)");
+			if (headRotatorRef == null) Debug.LogError("Missing (Head Rotator)");
+
 		}
 
 		//Allow user to speak to bot again.
@@ -292,6 +319,10 @@ public class MenuOptions
 			}
 			else
 			{
+				Debug.LogError("Missing components -> Trying Watson");
+				if (azureVoiceOutRef == null) Debug.LogError("Missing (Azure output)");
+				if (setBodyRef == null) Debug.LogError("Missing (Body component missing)");
+				if (faceShapeRef == null) Debug.LogError("Missing (Face Shape script)");
 				if (watsonOutRef != null && faceShapeRef != null && setBodyRef != null)
 				{
 					UnityEventTools.AddPersistentListener(watsonOutRef.finishedEvent, faceShapeRef.FinishedSpeaking);
@@ -332,7 +363,12 @@ public class MenuOptions
 			}
 			else
 			{
-				if (azureVoiceOutRef != null && faceShapeRef != null && setBodyRef != null)
+				Debug.LogError("Missing components -> Trying Azure");
+				if (watsonOutRef == null) Debug.LogError("Missing (Watson output)");
+				if (setBodyRef == null) Debug.LogError("Missing (Body component missing)");
+				if (faceShapeRef == null) Debug.LogError("Missing (Face Shape script)");
+				if (watsonOutRef != null && faceShapeRef != null && setBodyRef != null)
+					if (azureVoiceOutRef != null && faceShapeRef != null && setBodyRef != null)
 				{
 					UnityEventTools.AddPersistentListener(azureVoiceOutRef.finishedEvent, faceShapeRef.FinishedSpeaking);
 					UnityEventTools.AddStringPersistentListener(azureVoiceOutRef.finishedEvent, setBodyRef.SetBodyEmotion, "Base");
@@ -360,7 +396,10 @@ public class MenuOptions
 		}
 		else
 		{
-			Debug.LogError("Missing components | Tone Checker | You can ignore this one.");
+			Debug.LogWarning("Missing components. You can ignore this one.");
+			if (toneRef == null) Debug.LogWarning("Missing (Watson Tone)");
+			if (setBodyRef == null) Debug.LogWarning("Missing (Body component missing)");
+			if (faceShapeRef == null) Debug.LogWarning("Missing (Face Shape script)");
 		}
 
 	}

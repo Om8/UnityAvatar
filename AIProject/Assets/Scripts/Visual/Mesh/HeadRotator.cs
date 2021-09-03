@@ -16,87 +16,87 @@ namespace AI.Volume.Bot.Visual
 	{
 		//Both eye transforms, used to look at player.
 		[Header("Bones")]
-		[SerializeField, Tooltip("Characters left eye"), CannotBeNullObjectField]
+		[Tooltip("Characters left eye"), CannotBeNullObjectField]
 		public Transform leftEye = null;
-		[SerializeField, Tooltip("Characters right eye"), CannotBeNullObjectField]
+		[Tooltip("Characters right eye"), CannotBeNullObjectField]
 		public Transform rightEye = null;
-		[SerializeField, CannotBeNullObjectField]
+		[CannotBeNullObjectField]
 		public Transform headRoot = null;
 
 
 		[Header("Idle Eyes")]
 		//Timer for Idle eyes
 		[SerializeField, Tooltip("Max time between the eyes move a small distance")]
-		float maxTimeSmallJump = 2;
+		private float maxTimeSmallJump = 2;
 		[SerializeField, Tooltip("Min time between the eyes moving to a new small distance")]
-		float minTimeSmallJump = .7f;
+		private float minTimeSmallJump = .7f;
 		[SerializeField, Tooltip("Min time between a big jump")]
-		int minTimesLookAround = 2;
+		private int minTimesLookAround = 2;
 		[SerializeField, Tooltip("Max time between big jump")]
-		int maxTimeLookAround = 5;
-		float currentTime;
-		int currentLook;
+		private int maxTimeLookAround = 5;
+		private float currentTime;
+		private int currentLook;
 
 		[Header("Big Eye Jumps")]
 		[SerializeField, Tooltip("Distance in front of bot that the eyes should look")]
-		float lookDist = 3;
+		private float lookDist = 3;
 		[SerializeField, Tooltip("Size of circle that the end of the cone will be")]
-		float lookAngle = .5f;
+		private float lookAngle = .5f;
 		[Header("Small Eye Jumps")]
 		[SerializeField, Tooltip("Distance in front of bot that the eyes should look")]
-		float smallLookDist = 3;
+		private float smallLookDist = 3;
 		[SerializeField, Tooltip("Size of circle that the end of the cone will be")]
-		float smallLookAngle = .2f;
+		private float smallLookAngle = .2f;
 
 		[Header("General Eyes")]
 		[SerializeField, Tooltip("The lerp speed of the eyes")]
-		float eyeLerpSpeed = 50;
+		private float eyeLerpSpeed = 50;
 
 		[Header("Interaction Eyes")]
 		[SerializeField, Tooltip("The size of the users face, how wide can the avatar look?")]
-		float faceSize = 1;
+		private float faceSize = 1;
 		[SerializeField, Tooltip("The maximum time between eye jumps around the face")]
-		float interactionMaxTime = .9f;
+		private float interactionMaxTime = .9f;
 		[SerializeField, Tooltip("The minumum time between eye jumps around the face")]
-		float interactionMinTime = .2f;
+		private float interactionMinTime = .2f;
 		Vector3 interactionOffsetPosition;
 
 
 		[Header("Head")]
 		[SerializeField, Tooltip("Max direction between eyes and head before the head aligns to the eyes")]
-		float headRotationThreshold = 30;
+		private float headRotationThreshold = 30;
 		[SerializeField, Tooltip("How fast the head rotates")]
-		float headLerpSpeed = 2;
+		private float headLerpSpeed = 2;
 		[SerializeField, Tooltip("Lock the head to an angle from forwards")]
-		float maxTurnAngle = 50;
+		private float maxTurnAngle = 50;
 
-		Vector3 lerpingHeadLookPosition;
-		Vector3 headLookPosition;
+		private Vector3 lerpingHeadLookPosition;
+		private Vector3 headLookPosition;
 
-		Vector3 lookAtPosition;
-		Vector3 lerpingValue;
+		private Vector3 lookAtPosition;
+		private Vector3 lerpingValue;
 
-		Quaternion currentLookRotation;
+		private Quaternion currentLookRotation;
 
-		EyeState stateOfEyes = EyeState.idle;
+		private EyeState stateOfEyes = EyeState.idle;
 
 		[SerializeField, CannotBeNullObjectField]
-		HeadBob headBobScript = null;
-		Vector3 initialHeadStartOffset;
-		Vector3 desiredHeadPosition;
+		private HeadBob headBobScript = null;
+		private Vector3 initialHeadStartOffset;
+		private Vector3 desiredHeadPosition;
 		[SerializeField]
-		float maxHeadSway = 1;
+		private float maxHeadSway = 1;
 
 		[Header("Thinking Eyes")]
 		[SerializeField, Tooltip("When thinking, how far to the side can the eyes possibly be")]
-		float thinkOffsetSide = 1;
+		private float thinkOffsetSide = 1;
 		[SerializeField, Tooltip("How far up can the eyes go when thinking")]
-		float maxThinkOffsetUp = 1;
+		private float maxThinkOffsetUp = 1;
 		[SerializeField, Tooltip("Minimum that the eyes can go up when thinking")]
-		float minThinkOffsetUp = .2f;
-		Vector3 thinkingOffset;
+		private float minThinkOffsetUp = .2f;
+		private Vector3 thinkingOffset;
 
-		Quaternion currentOffset;
+		private Quaternion currentOffset;
 
 		private void Start()
 		{
@@ -126,7 +126,7 @@ namespace AI.Volume.Bot.Visual
 		}
 
 		// Update is called once per frame
-		void LateUpdate()
+		private void LateUpdate()
 		{
 			switch (stateOfEyes)
 			{
@@ -160,7 +160,7 @@ namespace AI.Volume.Bot.Visual
 		/// <summary>
 		/// Get a random position in front of the head and set the look position
 		/// </summary>
-		void IdleEyes(float lookDistance, float lookAng)
+		private void IdleEyes(float lookDistance, float lookAng)
 		{
 			lookAtPosition = GetPositionInCome(headRoot.transform.position, this.transform.forward, lookDistance, lookAng);
 		}
@@ -170,7 +170,7 @@ namespace AI.Volume.Bot.Visual
 		/// <summary>
 		/// Cool down for eyes, set the min and max time to adjust the speed.
 		/// </summary>
-		void CountDownToChangeDirection()
+		private void CountDownToChangeDirection()
 		{
 			currentTime = Mathf.Clamp(currentTime - Time.deltaTime, 0, maxTimeSmallJump);
 			if (currentTime == 0)
@@ -194,7 +194,7 @@ namespace AI.Volume.Bot.Visual
 		/// <summary>
 		/// When the bot has been interacted with, look at the player
 		/// </summary>
-		void InteractingEyes()
+		private void InteractingEyes()
 		{
 			GetInteractionEyePosition();
 			if (Camera.main != null)
@@ -206,7 +206,7 @@ namespace AI.Volume.Bot.Visual
 		/// <summary>
 		/// Once the player has asked a question, do a thinking pose.
 		/// </summary>
-		void ThinkingEyes()
+		private void ThinkingEyes()
 		{
 
 		}
@@ -215,7 +215,7 @@ namespace AI.Volume.Bot.Visual
 		/// <summary>
 		/// Get the eye position of the eyes when interacting. 
 		/// </summary>
-		void GetInteractionEyePosition()
+		private void GetInteractionEyePosition()
 		{
 			currentTime = Mathf.Clamp(currentTime - Time.deltaTime, 0, maxTimeSmallJump);
 			if (currentTime == 0)
@@ -231,7 +231,7 @@ namespace AI.Volume.Bot.Visual
 		}
 
 		//Adjust the head positions
-		void SetInteractingHeadPosition()
+		private void SetInteractingHeadPosition()
 		{
 			if (headRoot != null && Camera.main != null)
 			{
@@ -243,7 +243,7 @@ namespace AI.Volume.Bot.Visual
 		///  Works out vector direction to look and sets the eye transform to look at it
 		/// </summary>
 		/// <param name="eye">Eye socket transform to rotate</param>
-		void SetEyeRotation(Transform eye)
+		private void SetEyeRotation(Transform eye)
 		{
 			lerpingValue = Vector3.Lerp(lerpingValue, lookAtPosition, Time.deltaTime * eyeLerpSpeed);
 			eye.rotation = Quaternion.LookRotation((lerpingValue - eye.position).normalized, Vector3.up);
@@ -276,7 +276,7 @@ namespace AI.Volume.Bot.Visual
 		}
 
 		//Follows the eyes if the eyes move out of threshold.
-		void HeadFollowEyes()
+		private void HeadFollowEyes()
 		{
 			if (headRoot != null && leftEye != null)
 			{
@@ -289,7 +289,7 @@ namespace AI.Volume.Bot.Visual
 		}
 
 		//Rotate head within the clamped range. 
-		void SetFinalHeadRotation()
+		private void SetFinalHeadRotation()
 		{
 			lerpingHeadLookPosition = Vector3.Lerp(lerpingHeadLookPosition, lookAtPosition, Time.deltaTime * headLerpSpeed);
 			headRoot.rotation = Quaternion.LookRotation((lerpingHeadLookPosition - headRoot.position).normalized, Vector3.up);
@@ -313,7 +313,7 @@ namespace AI.Volume.Bot.Visual
 		/// <param name="length">How far the cone should go</param>
 		/// <param name="radius">Radius of the cone end</param>
 		/// <returns></returns>
-		Vector3 GetPositionInCome(Vector3 startPosition, Vector3 direction, float length, float radius)
+		private Vector3 GetPositionInCome(Vector3 startPosition, Vector3 direction, float length, float radius)
 		{
 			Vector3 randomCircle = Random.insideUnitCircle * radius;
 			Vector3 finalPosition = (startPosition + (direction * length)) + (direction + new Vector3(randomCircle.x, randomCircle.y));

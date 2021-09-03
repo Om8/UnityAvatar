@@ -8,6 +8,7 @@ namespace AI.Volume.Bot.Data
 	[System.Serializable]
 	public struct FacePose
 	{
+		//Only one float for the moment, allows for future expansion.
 		public float[] blendShapes;
 
 		public FacePose(float[] shapes)

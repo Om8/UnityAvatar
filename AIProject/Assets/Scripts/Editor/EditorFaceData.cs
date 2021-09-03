@@ -8,8 +8,8 @@ using AI.Volume.Bot.Visual;
 //[CustomEditor(typeof(MouthPositionList))]
 public class EditorFaceData : Editor
 {
-	int selected = 0;
-	int lastSelected = 0;
+	private int selected = 0;
+	private int lastSelected = 0;
 	public override void OnInspectorGUI()
 	{
 		//base.OnInspectorGUI();

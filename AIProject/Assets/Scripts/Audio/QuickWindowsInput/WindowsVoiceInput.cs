@@ -8,22 +8,24 @@ using AI.Volume.Bot.Events;
 
 namespace AI.Volume.Bot.Audio
 {
+	[RequireComponent(typeof(SpatialChecker))]
 	public class WindowsVoiceInput : MonoBehaviour
 	{
 		//Voice detection recogniser
-		DictationRecognizer voiceDictation;
+		private DictationRecognizer voiceDictation;
 		//Calls when the user first speaks to the bot.
 		public UnityEvent hasInteracted;
 		//Calls when the bot has finished understanding what the player has said.
 		public AudioEvent spokenTo;
 		[SerializeField, Tooltip("Is spatial, does the voice input have range?")]
-		bool spatial = false;
+		private bool spatial = false;
 		[SerializeField, Tooltip("How far can the bot hear? This requires spatial to be turned on")]
-		float spatialRange = 1f;
+		private float spatialRange = 1f;
+		private SpatialChecker spatialChecker => this.gameObject.GetComponent<SpatialChecker>();
 
 
 		// Start is called before the first frame update
-		void Start()
+		private void Start()
 		{
 			//Create a new voice recogniser.
 			voiceDictation = new DictationRecognizer();
@@ -59,17 +61,22 @@ namespace AI.Volume.Bot.Audio
 		/// </summary>
 		/// <param name="text">Final text</param>
 		/// <param name="confidence">How confident the system is</param>
-		void DictationResult(string text, ConfidenceLevel confidence)
+		private void DictationResult(string text, ConfidenceLevel confidence)
 		{
 			//Check if spatial
 			if (spatial && Camera.main != null)
 			{
-				if (Vector3.Distance(Camera.main.transform.position, this.transform.position) <= spatialRange)
+				if (spatialChecker != null)
 				{
-					if (spokenTo != null)
+					//Check the spatial checker if the player is in range. It does not have to be a player, could be anything, even another AI.
+					if (spatialChecker.IsInRange(this.gameObject, Camera.main.gameObject, spatialRange) && spatialChecker.LineOfSightChecker(this.gameObject, Camera.main.gameObject))
 					{
-						spokenTo.Invoke(text);
-						voiceDictation.Stop();
+						if (spokenTo != null)
+						{
+							//If the spoken to event is valid, call it.
+							spokenTo.Invoke(text);
+							voiceDictation.Stop();
+						}
 					}
 				}
 			}
@@ -123,7 +130,7 @@ namespace AI.Volume.Bot.Audio
 		}
 
 		//On error, debug log the error.
-		void DictationError(string error, int result)
+		private void DictationError(string error, int result)
 		{
 			Debug.Log(error + " || number: " + result);
 		}

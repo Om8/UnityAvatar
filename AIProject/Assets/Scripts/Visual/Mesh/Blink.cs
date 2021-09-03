@@ -7,27 +7,27 @@ namespace AI.Volume.Bot.Visual
 	public class Blink : MonoBehaviour
 	{
 		[SerializeField, Tooltip("Skin mesh renderer that has all of the values that effect the mesh"), CannotBeNullObjectField]
-		SkinnedMeshRenderer blendShapes = null;
+		private SkinnedMeshRenderer blendShapes = null;
 
 		[SerializeField, Tooltip("Minimum time between blinks")]
-		float minTime = 1.4f;
+		private float minTime = 1.4f;
 		[SerializeField, Tooltip("Maximum time between blinks")]
-		float maxTime = 4;
+		private float maxTime = 4;
 		[SerializeField, Tooltip("speed of characters blink")]
-		float blinkSpeedMultiplier = 10;
+		private float blinkSpeedMultiplier = 10;
 		[SerializeField]
-		int leftEyeLid = 0;
+		private int leftEyeLid = 0;
 		[SerializeField]
-		int rightEyeLid = 1;
+		private int rightEyeLid = 1;
 
-		bool blinking = false;
-		float currentBlink = 0;
-		bool goingDown = true;
+		private bool blinking = false;
+		private float currentBlink = 0;
+		private bool goingDown = true;
 		[SerializeField, Tooltip("Leave at true for blinking, set to false to disable blinking")]
-		bool blinkLoopBool = true;
+		private bool blinkLoopBool = true;
 
 		// Start is called before the first frame update
-		void Start()
+		private void Start()
 		{
 			if (blendShapes != null)
 			{
@@ -58,7 +58,7 @@ namespace AI.Volume.Bot.Visual
 		}
 
 		//Loops forever and blinks. 
-		IEnumerator BlinkLoop()
+		private IEnumerator BlinkLoop()
 		{
 			while (blinkLoopBool)
 			{
