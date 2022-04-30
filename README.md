@@ -1,4 +1,4 @@
-# Volume AI Unity Avatar
+# Unity Avatar
 This projects aim is to make it easy to connect NLP systems to a virtual avatar in Unity 3D. It uses a mixture of Watson, Azure and Windows to input voice, generate a suitable response and output a neural voice that is synced up to a mesh. 
 
 The project uses Unity Events to connect the modules, allowing for different solutions to be plugged and unplugged. There is currently Watson and Windows voice input and Watson and Azure voice out, alternatives are available. The whole system works by passing strings around, it is possible to connect an external dialogue tree with just strings in and strings out. 
